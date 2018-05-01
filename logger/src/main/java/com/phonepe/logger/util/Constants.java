@@ -1,7 +1,13 @@
 package com.phonepe.logger.util;
 
+/**
+ * Framework level constants class to store various constants required by
+ * different classes
+ *
+ * @author Kaustubh Khasnis
+ */
 public class Constants {
-    public static final String CONFIG_FILE_LOCATION_KEY        = "logger.config";
+    public static final String CONFIG_FILE_LOCATION_KEY        = "sinks.config";
     public static final String TS_FORMAT_KEY                   = "ts_format";
     public static final String LOG_LEVEL_KEY                   = "log_level";
     public static final String SINK_TYPE_KEY                   = "sink_type";
@@ -15,4 +21,6 @@ public class Constants {
     public static final String CLOSE_SINK_MESSAGE              = "CLOSE";
     public static final String DEFAULT_CONFIG_FILE_LOCATION    = "sinkConfig.properties";
     public static final String DEFAULT_SINK_PROVIDER_CONFIG    = "sinkProviderConfig.properties";
+    public static final String DEFAULT_THREAD_MODE             = Constants.SINGLE_THREADED_MODE;
+    public static final String DEFAULT_WRITE_MODE              = Constants.SYNC_WRITE_MODE;
 }

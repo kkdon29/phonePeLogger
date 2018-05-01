@@ -3,9 +3,7 @@ package com.phonepe.logger.sink.config.impl;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-import org.junit.After;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 
 import com.phonepe.logger.LogLevel;
@@ -14,14 +12,6 @@ import com.phonepe.logger.sink.config.SinkConfigReader;
 import com.phonepe.logger.sink.config.exception.ConfigReaderException;
 
 public class PropertyFileSinkConfigReaderTest {
-
-    @Before
-    public void setUp() throws Exception {
-    }
-
-    @After
-    public void tearDown() throws Exception {
-    }
 
     @Test
     public void testPropertyFileSinkConfigReaderSingleConfig() {

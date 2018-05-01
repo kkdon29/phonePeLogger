@@ -8,7 +8,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.StringReader;
-import java.lang.reflect.Field;
 import java.nio.charset.Charset;
 
 import org.junit.After;
@@ -39,9 +38,6 @@ public class LoggerTest {
                     IllegalArgumentException, IllegalAccessException {
         if (this.logger != null) {
             this.logger.close();
-            Field loggerInstance = Logger.class.getDeclaredField("logger");
-            loggerInstance.setAccessible(true);
-            loggerInstance.set(null, null);
         }
         this.logger = null;
         System.setOut(this.curSysout);
@@ -56,7 +52,8 @@ public class LoggerTest {
     }
 
     @Test
-    public void testLog() throws FileNotFoundException, IOException {
+    public void testLog() throws FileNotFoundException, IOException,
+                    InterruptedException {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         PrintStream printStream = new PrintStream(byteArrayOutputStream);
         System.setOut(printStream);
@@ -64,7 +61,8 @@ public class LoggerTest {
 
         this.logger.log(LogLevel.INFO, LoggerTest.class.getName(),
                         TestUtils.prepareMessageForLog(1, 1));
-
+        // Adding a sleep in order to let Asynchronous logger finish logging
+        Thread.sleep(500);
         try (BufferedReader reader = new BufferedReader(
                         new FileReader("test.log"))) {
             String logMessage = reader.readLine();

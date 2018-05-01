@@ -6,6 +6,20 @@ import java.util.concurrent.locks.Lock;
 
 import exception.MethodNotImplementedException;
 
+/**
+ * a NoOP {@link Lock} class created in order to simplify code for handling
+ * cases where you may or may not need thread safety. Usually in such cases the
+ * thread safety is specified in cinfig. So in order to avoid
+ * <code>if(threadsafe)
+ * {do threadsafe op }
+ * else
+ * { proceed with threadunsafe}
+ *</code>
+ * kind of blocks everywhere in code, we just create a {@link NoOPLock} where
+ * thread safety may or may not be needed and use that everywhere
+ * 
+ * @author ASUS
+ */
 public class NoOPLock implements Lock {
 
     @Override

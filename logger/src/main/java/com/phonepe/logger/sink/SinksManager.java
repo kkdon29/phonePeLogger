@@ -3,10 +3,18 @@ package com.phonepe.logger.sink;
 import java.util.List;
 import java.util.Properties;
 
+import com.phonepe.logger.LogLevel;
 import com.phonepe.logger.LogMessage;
 import com.phonepe.logger.impl.LogMessageFactory;
 import com.phonepe.logger.sink.config.impl.SinkConfigReaderProvider;
 
+/**
+ * A manager class for all {@link Sink}s.Responsible for initiating
+ * {@link SinkProviderRegistry}, {@link SinkRepo} and passing down logs to
+ * relevant {@link Sink}s
+ *
+ * @author Kaustubh Khasnis
+ */
 public class SinksManager {
 
     private SinkProviderRegistry sinkProviderRegistry;
@@ -26,6 +34,13 @@ public class SinksManager {
                         logMessageFactory);
     }
 
+    /**
+     * logs given {@link LogMessage} to relevant {@link Sink}s, i.e.
+     * {@link Sink}s interested in corresponding {@link LogLevel}
+     *
+     * @param logMessage
+     *            {@link LogMessage} to log
+     */
     public void log(LogMessage logMessage) {
 
         List<Sink> sinkList = this.sinkRepo

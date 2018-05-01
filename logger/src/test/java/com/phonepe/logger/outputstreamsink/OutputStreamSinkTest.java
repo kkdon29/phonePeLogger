@@ -7,7 +7,6 @@ import java.io.UnsupportedEncodingException;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
-import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -37,10 +36,6 @@ public class OutputStreamSinkTest {
     public void setUp() {
         this.outputStream = new ByteArrayOutputStream();
         this.logMessageFactory = new LogMessageFactory();
-    }
-
-    @After
-    public void tearDown() {
     }
 
     @Test

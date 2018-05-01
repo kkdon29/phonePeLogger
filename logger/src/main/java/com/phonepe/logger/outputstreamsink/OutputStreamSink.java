@@ -9,6 +9,12 @@ import com.phonepe.logger.impl.LogMessageFactory;
 import com.phonepe.logger.sink.Sink;
 import com.phonepe.logger.sink.config.SinkConfig;
 
+/**
+ * {@link Sink} implementation to write {@link LogMessage} to specified
+ * {@link OutputStream}
+ *
+ * @author Kaustubh Khasnis
+ */
 public class OutputStreamSink implements Sink {
 
     protected SinkConfig      sinkConfig;

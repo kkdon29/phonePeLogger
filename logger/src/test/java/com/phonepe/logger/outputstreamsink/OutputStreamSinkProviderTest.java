@@ -60,7 +60,6 @@ public class OutputStreamSinkProviderTest {
         if (this.sink != null) {
             this.sink.close();
         }
-
     }
 
     @Test

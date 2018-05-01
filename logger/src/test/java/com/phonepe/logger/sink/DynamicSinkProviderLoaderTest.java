@@ -3,7 +3,7 @@ package com.phonepe.logger.sink;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.phonepe.logger.sink.exception.SinkLoaderException;
+import com.phonepe.logger.sink.exception.SinkProviderLoaderException;
 
 public class DynamicSinkProviderLoaderTest {
 
@@ -15,7 +15,7 @@ public class DynamicSinkProviderLoaderTest {
         Assert.assertEquals(sinkProvider.getClass(), SinkProviderImpl.class);
     }
 
-    @Test(expected = SinkLoaderException.class)
+    @Test(expected = SinkProviderLoaderException.class)
     public void testLoadSinkbyClassNameNonExistentClass() {
         DynamicSinkProviderLoader sinkLoader = new DynamicSinkProviderLoader();
         SinkProvider sink = sinkLoader
@@ -23,7 +23,7 @@ public class DynamicSinkProviderLoaderTest {
         Assert.assertEquals(sink.getClass(), SinkProviderImpl.class);
     }
 
-    @Test(expected = SinkLoaderException.class)
+    @Test(expected = SinkProviderLoaderException.class)
     public void testLoadSinkbyClassNameInvalidClass() {
         DynamicSinkProviderLoader sinkLoader = new DynamicSinkProviderLoader();
         SinkProvider sink = sinkLoader.loadSinkProviderbyClassName(

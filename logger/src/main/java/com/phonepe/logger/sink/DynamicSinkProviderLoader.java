@@ -2,10 +2,27 @@ package com.phonepe.logger.sink;
 
 import java.lang.reflect.InvocationTargetException;
 
-import com.phonepe.logger.sink.exception.SinkLoaderException;
+import com.phonepe.logger.sink.exception.SinkProviderLoaderException;
 
+/**
+ * Dynamic loader class to load {@link SinkProvider}s at run time provided in
+ * {@link SinkProviderRegistry} using java reflection api.
+ *
+ * @author Kaustubh Khasnis
+ */
 public class DynamicSinkProviderLoader {
-    public SinkProvider loadSinkProviderbyClassName(String className) {
+    /**
+     * Create {@link SinkProvider} using reflection api using specified
+     * className
+     *
+     * @param className
+     *            Name of the class to be loaded
+     * @return {@link SinkProvider} created
+     * @throws SinkProviderLoaderException
+     *             in case something goes wrong during loading
+     */
+    public SinkProvider loadSinkProviderbyClassName(String className)
+                    throws SinkProviderLoaderException {
         try {
             @SuppressWarnings("unchecked")
             Class<SinkProvider> sinkClass = (Class<SinkProvider>) Class
@@ -16,7 +33,7 @@ public class DynamicSinkProviderLoader {
                         | IllegalAccessException | IllegalArgumentException
                         | InvocationTargetException | NoSuchMethodException
                         | SecurityException | ClassCastException ex) {
-            throw new SinkLoaderException(className, ex);
+            throw new SinkProviderLoaderException(className, ex);
         }
     }
 }

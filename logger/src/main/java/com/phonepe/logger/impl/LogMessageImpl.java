@@ -7,6 +7,12 @@ import com.phonepe.logger.LogLevel;
 import com.phonepe.logger.LogMessage;
 import com.phonepe.logger.LogType;
 
+/**
+ * Implementation of {@link LogMessage} interface with {@link Object#hashCode()}
+ * and {@link Object#equals(Object)} overridden
+ *
+ * @author Kaustubh Khasnis
+ */
 class LogMessageImpl implements LogMessage , Serializable {
     private static final long serialVersionUID = -7540940587517246569L;
     private LogLevel          logLevel;

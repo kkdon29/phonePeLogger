@@ -9,6 +9,15 @@ import com.phonepe.logger.sink.config.SinkConfig;
 import com.phonepe.logger.sink.config.SinkConfigReader;
 import com.phonepe.logger.sink.config.impl.SinkConfigReaderProvider;
 
+/**
+ * A factory class to create and populate {@link SinkRepo}. It uses
+ * {@link SinkConfigReaderProvider} to read the {@link SinkConfig}s and uses
+ * {@link SinkProviderRegistry} to get relevant {@link SinkProvider} and create
+ * {@link Sink} with it.The created {@link Sink} is registered in
+ * {@link SinkRepo} against {@link LogLevel}s it is interested in.
+ *
+ * @author Kaustubh Khasnis
+ */
 public class SinkRepoFactory {
     public SinkRepo createSinkRepo(Properties loggerProperties,
                     SinkProviderRegistry sinkProviderRegistry,

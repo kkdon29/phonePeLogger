@@ -1,6 +1,7 @@
 package com.phonepe.logger.outputstreamsink;
 
 import java.io.IOException;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
@@ -14,6 +15,13 @@ import com.phonepe.logger.sink.config.SinkConfig;
 import com.phonepe.logger.util.NoOPLock;
 import com.phonepe.logger.util.Utils;
 
+/**
+ * A {@link LogWriter} and {@link LogReader} using unbound {@link BlockingQueue}
+ * as log store. It serves as intermediate buffer for asynchronous
+ * {@link OutputStreamSink}.
+ *
+ * @author Kaustubh Khasnis
+ */
 public class BlockingQueueLogReaderWriter implements LogWriter , LogReader {
     private LinkedBlockingQueue<LogMessage> messageQueue;
     private volatile boolean                isClosed = false;
@@ -64,11 +72,6 @@ public class BlockingQueueLogReaderWriter implements LogWriter , LogReader {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * @see com.phonepe.logger.outputstreamsink.LogReader#getNextLog(long,
-     * java.util.concurrent.TimeUnit)
-     */
     @Override
     public LogMessage getNextLog(long timeOut, TimeUnit unit)
                     throws InterruptedException {

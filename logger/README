@@ -1,0 +1,84 @@
+This is a sample logging framework satisfying the requirements specified in given assignment.
+
+Overall design:
+    Logger is the top level class of the framework. Applications are expected to interact with this class only.It is a thread-safe singleton class having high level methods to log messages and close the logger when required. Internally it interacts with SinkManager class. It expects sinks.config and sinkproviders.config properties to be passed as system properties (i.e. using -D arguments to java command).Each of those indicate locations of corresponding properties files, purpose of whom will be explained later. In abscence of them being set, framework uses default values, namely "sinkConfig.properties" and "sinkProviderConfig.properties".
+	The SinkManager class handles interactions with underlying classes, namely SinkProviderRegistry and SinkRepo.
+	The SinkProviderRegistry is a registry containing mapping of various sink types and their implementation.
+	SinkRepo contains mapping of log levels and sinks which are interested in those log levels. Whenever a log message comes in, it is pased to SinkRepo. The SinkRepo then iterates through all Sinks resgistered against the log level of that message and passes log message to them.
+	A sink is an object encapsulating a single log store such as a file.A SinkConfig is provided to the sink as a encapsulation over its various configuration. The SinkConfig contains mandatory properties such as date format to format log message date with, log levels the sink is interested in , type of sink, whether sink should handle thread safety or not and finally whether it should use asynchronous logging.The log method provided in sink should log the given message to the underlying store taking thread safety and async/sync configs into account 
+	A sink is created using a SinkProvider. SinkProviders are loaded by framework at runtime using reflection api. The mapping between types of sinks and their providers is provided in corresponding config file and maintained in SinkProviderRegistry
+	Framework also provides couple of interfaces namely LogReader and LogWriter to facilitate chaining of various log stores. This can be particularly useful for asynchronous logging or cases where log messages need to be buffered before passing to actual persistance. Sink may write messages to some temporary store such as in memory cache using first LogWriter. The asynchronous thread can then pickup those messages using LogReader, do their own processing and write to next log store using next LogWriter. LogReader is expected to maintain a cursor internally so that it does not provide duplicate logs or skip some logs. Each log read must happen at cursor and then cursor must be advanced to next log.
+	
+How to implement your own Sink:
+	Implementing your own Sink requires you to do 3 things:
+		1. Implement SinkProvider interface. The implementation takes corresponding SinkConfig into account and creates a Sink. SinkProvider must always return instance of same type of sink. It should not mix two different Sink implementations.
+		2. Implement Sink interface. The implementation writes logs to the LogWriter you may have created for sink. Usage of LogWriter is optional but highly recommended. It should also take into account thread safety and asynchronous behavior specified in SinkConfig provided. The implementation should support all types of log messages explained bellow.
+		3. Register SinkProvider by using configuration file against a specific sink type.
+		
+Sample implementation(OutputStreamSink and OutputStreamSinkProvider):
+	The framework provides a sample implementation that logs messages to an OutputStream. Currently supported ones are console(i.e. System.out) and file. In future a network one may also be supported.
+	The implementation provides two LogWriters, namely BlockingQueueLogReaderWriter and OutputStreamLogWriter. When asynchronous logging is required, BlockingQueueLogReaderWriter is used. In case of synchronous logging,OutputStreamLogWriter is used.
+		1. Asynchronous logging: As mentioned, OutputStreamSink uses BlockingQueueLogReaderWriter for this. It uses an unbounded BlockingQueue internally as a storage buffer. So each message that is received, it first goes into this queue.BlockingQueueLogReaderWriter also implements LogReader interface, which dequeues logmessages on each readlog request. The read requests are fired from a separate thread, implemented by AsynchronousOutputStreamLoggerTask runnable. The logs read from the queue are then written to actual OutputStream using OutputStreamLogWriter.
+		2. Synchronous logging: OutputStreamLogWriter is used directly in this case. Each log message that comes in is directly written to OutputStream using OutputStreamLogWriter.
+	The implementation requires two custom configs to be present in associated SinkConfig
+		1. file_location: Required. Specifies destination of logs. Its format is "streamType:streamLocation". StreamType indicates type of output stream, console or file.In case of console, streamLocation is not used. In case of file, it points to the destination file.
+		2. charset: Optional. Character set encoding to be used for each serialized log to be written to OutputStream. "default" indicates JVM default to be used. Otherwise it needs to be supported by Charset.forName() method. When it is not provided, "default" is used.
+	While OutputStreamSink handles actual logging, OutputStreamSinkProvider handles creation of OutputStream and OutputStreamSink. It parses the file_location field to identify streamType and create OutputStream accordingly. The OutputStream is then passed to created OutputStreamSink.
+
+Configuraion files:
+	As mentioned, the framework requires two config files:
+	1) sinkproviders.config: This is essentially the mapping between sinkTypes and SinkProvider implementations in properties file format. SinkTypes should be unique. A sample is provided in src/test/resources/SinkRegistry.properties.
+	2) sinks.config: This contains configuration for each Sink in properties format separated by blank lines between two different sink configs. Each sinkConfig contains following common properties.
+		a. ts_format: Mandatory.  Time format supported by DateTimeFormatter to serialized time of logging.
+		b. log_level: Mandatory. Comma separated list of log levels this sink should support.
+		c. sink_type: Mandatory. Type of sink. This should be one of the types registered in sinkproviders.config
+		d. thread_model: Optional. Indicates whether sink should support multithreaded logging or not. Can have have values either "SINGLE" indicating single threaded or "MULTI" for multithreaded. Default is "SINGLE"
+		e. write_mode: Optional. Indicates whether logging should be synchronous(value "SYNC") or asynchronous(value "ASYNC"). Default is SYNC.
+		Apart from these the config can have custom values needed for sink implementation. Custom values for OutputStreamSink are explained above. A sample is provided in src/test/resources/SinkConfigs.properties
+
+Log messages:
+	Log messages are classified in two categories and both types need to be supported by each type of sink:
+		1. USER_LOG: Logs generated by user application. Carry timestamp of generation, log level, namespace and message. Supported log levels are DEBUG, INFO, WARN, ERROR, FATAL.
+		2. FRAMEWORK_LOG: Logs used by framework internally to ask sinks to take specific actions. The actions are specified as "message" field of the log. Following are the actions that are required to be supported:
+			a. "CLOSE": It asks sink to close its operation. Upon receipt of this message, sink should stop accepting any new messages, log all existing messages it may have already received and close underlying resources such as open OutputStreams.The message should be propagated through its LogWriter-LogReader chain and each of them must take actions to close their own resources and log any pending log messages. Further, receipt of multiple CLOSE messages should not result in error.
+
+Using the framework:
+	The usage is as simple as getting the logger instance and proceed with logging as follows:
+	{
+		....
+		Logger logger=Logger.getLogger()
+		logger.log(LogLevel.INFO,"mynamespace","mymessage");
+		....
+	}
+	When you are done using, it can be closed like this (recommended to do it only at the time of application shutdown):
+	{
+		...
+		Logger logger=Logger.getLogger();
+		logger.close();
+	}
+	
+	A sample usage of logger in a multithreaded environment using both synchronous and asynchronous logging with OutputStreamSink is provided in com.phonepe.logger.LoggerStressTest.
+	
+Build:
+	The framework uses maven for its build. So corresponding maven commands such as maven build, maven install will work for this.
+
+Documentation:
+	The source code contains extensive javadoc documentation. Its not provided for test cases as it doesn't make much sence(javadocs are for public usage and understanding, while test cases are not supposed to be used externally). The javadocs can be generated using "mvn site" command.
+	One of the bad things I did while documenting is to add @author field in order to preserve credit. In a real code it is not recommended to use it(https://stackoverflow.com/questions/17269843/javadoc-author-tag-good-practices/17271433#17271433).
+
+Testability:
+	Framework comes with extensive unit testing. It also contains a stress testcase to test it under large number of threads and messages. The code coverage is generated using JaCoCo plugin for maven and is available in "jacoco-ut" folder under target directory once "mvn test" is executed. Current code coverage stands at 97% for instructions and 94% for branches.
+	Reasons why 100% could not be achieved:
+		1. Because of JaCoCo limitations. When unit testing switch(String) construct, JaCoCo internally counts a couple of branches extra which doesn't make sence in reality. https://github.com/jacoco/jacoco/wiki/FilteringOptions and https://github.com/jacoco/jacoco/issues/116.
+		2. There are couple of cases where I am doing switch(enum). In case of enums, "default" branch of switch block cannot be unit tested. But its necessary to have that branch throw an exception, so that it serves as red flag to developers to handle it in future in case they extend the enum.
+	Exceptions,Constants and NoOPLock class are excluded from code coverage calculation as it doesnt make sence to unit test them.
+
+The assumpions I took:
+	I assumed that while language features may be used, no external libraries/frameworks may be used for source code(Since log4j also doesnt use except the dispatcher framework in modern implementations). I have however used unit testing frameworks such as Mockito, jUnit, EqualsVerifier for testing.
+	With the lack of usage of proper Dependency Injection framework, I was forced to retort to factory classes everywhere. Same thing also forced me to have a top level singleton for Logger even if I don't like it.
+
+Versions used:
+Jdk 1.8
+Junit 4.12
+Mockito 2.18.3
+equalsverifier 2.4.6 (http://jqno.nl/equalsverifier/)

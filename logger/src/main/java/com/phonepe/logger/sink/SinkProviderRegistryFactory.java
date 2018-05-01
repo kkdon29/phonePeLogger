@@ -10,10 +10,38 @@ import com.phonepe.logger.sink.exception.SinkProviderAlreadyRegisteredException;
 import com.phonepe.logger.sink.exception.SinkProviderRegistryConfigException;
 import com.phonepe.logger.util.Constants;
 
+/**
+ * A registry class for creating {@link SinkProvider}s.It reads
+ * {@link SinkProvider} configurations from registry file pointed by
+ * {@link Constants#SINK_PROVIDER_REGISTRY_FILE_KEY}. The file is expected to be
+ * in properties file format. It needs to have mapping between sink types and
+ * {@link SinkProvider} implementations.
+ *
+ * @author Kaustubh Khasnis
+ */
 public class SinkProviderRegistryFactory {
+    /**
+     * Creates {@link SinkProviderRegistry} with help of given parameters and
+     * property file.
+     *
+     * @param loggerProperties
+     *            Framework level configuration {@link Properties} used by
+     *            various classes to get configurations.
+     * @param sinkLoader
+     *            {@link DynamicSinkProviderLoader} instance which can load
+     *            various {@link SinkProvider} implementations at run time.
+     * @return
+     *         {@link SinkProviderRegistry} instance
+     * @throws SinkProviderRegistryConfigException
+     *             in case of invalid config
+     * @throws SinkProviderAlreadyRegisteredException
+     *             when there are duplicate sinkTypes in given registry file
+     */
     public SinkProviderRegistry createSinkProviderRegistry(
                     Properties loggerProperties,
-                    DynamicSinkProviderLoader sinkLoader) {
+                    DynamicSinkProviderLoader sinkLoader)
+                    throws SinkProviderRegistryConfigException,
+                    SinkProviderAlreadyRegisteredException {
         String sinkRegistryFileLocation = loggerProperties
                         .getProperty(Constants.SINK_PROVIDER_REGISTRY_FILE_KEY);
         if (sinkRegistryFileLocation == null) {
@@ -25,6 +53,11 @@ public class SinkProviderRegistryFactory {
                         sinkLoader);
     }
 
+    /*
+     * Creates and populates {@link SinkProviderRegistry} with all the sink type
+     * and {@link SinkProvider} mappings by reading file pointed by
+     * sinkRegistryFileLocation
+     */
     private SinkProviderRegistry populateSinkProviderRegistry(
                     String sinkRegistryFileLocation,
                     DynamicSinkProviderLoader sinkLoader) {

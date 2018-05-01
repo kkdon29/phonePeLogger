@@ -1,8 +1,6 @@
 package com.phonepe.logger.util;
 
-import org.junit.After;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -10,14 +8,6 @@ import com.phonepe.logger.LogMessage;
 import com.phonepe.logger.LogType;
 
 public class UtilsTest {
-
-    @Before
-    public void setUp() throws Exception {
-    }
-
-    @After
-    public void tearDown() throws Exception {
-    }
 
     @Test
     public void testCheckNullOrEmptyNullString() {

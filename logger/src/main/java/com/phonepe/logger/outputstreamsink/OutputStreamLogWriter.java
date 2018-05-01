@@ -13,6 +13,11 @@ import com.phonepe.logger.sink.config.SinkConfig;
 import com.phonepe.logger.util.NoOPLock;
 import com.phonepe.logger.util.Utils;
 
+/**
+ * {@link LogWriter} to publish messages to specified {@link OutputStream}
+ *
+ * @author Kaustubh Khasnis
+ */
 public class OutputStreamLogWriter implements LogWriter {
     private final Lock       lock;
     private OutputStream     outputStream;
@@ -20,6 +25,20 @@ public class OutputStreamLogWriter implements LogWriter {
     private SinkConfig       sinkConfig;
     private Charset          charset;
 
+    /**
+     * Creates an {@link OutputStream} based {@link LogWriter}. It also passes
+     * {@link SinkConfig} so that the thread safety choice of user can be obeyed
+     * Further, it uses {@link OutputStreamSinkConstants#CHARSET_PROPERTY} in
+     * {@link SinkConfig} to determine {@link Charset} used to encode serialized
+     * {@link LogMessage}s into bytes. Default to be used is
+     * {@link OutputStreamSinkConstants#DEFAULT_CHARSET}. When it is set to
+     * "default", JVM default {@link Charset} is used.
+     *
+     * @param outputStream
+     *            {@link OutputStream} to push {@link LogMessage}s to
+     * @param sinkConfig
+     *            {@link SinkConfig} to be used for pushing {@link LogMessage}s
+     */
     public OutputStreamLogWriter(OutputStream outputStream,
                     SinkConfig sinkConfig) {
         this.outputStream = outputStream;
@@ -51,12 +70,6 @@ public class OutputStreamLogWriter implements LogWriter {
         return sb.toString();
     }
 
-    /*
-     * (non-Javadoc)
-     * @see
-     * com.phonepe.logger.outputstreamsink.LogWriter#log(com.phonepe.logger.
-     * LogMessage)
-     */
     @Override
     public void log(LogMessage logMessage)
                     throws IOException, UnsupportedLogTypeException {
