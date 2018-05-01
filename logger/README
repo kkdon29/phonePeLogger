@@ -67,11 +67,11 @@ Documentation:
 	One of the bad things I did while documenting is to add @author field in order to preserve credit. In a real code it is not recommended to use it(https://stackoverflow.com/questions/17269843/javadoc-author-tag-good-practices/17271433#17271433).
 
 Testability:
-	Framework comes with extensive unit testing. It also contains a stress testcase to test it under large number of threads and messages. The code coverage is generated using JaCoCo plugin for maven and is available in "jacoco-ut" folder under target directory once "mvn test" is executed. Current code coverage stands at 97% for instructions and 94% for branches.
+	Framework comes with extensive unit testing. It also contains a stress testcase to test it under large number of threads and messages. The code coverage is generated using JaCoCo plugin for maven and is available in "jacoco-ut" folder under target directory once "mvn test" is executed. Current code coverage stands at 98% for instructions and 94% for branches.
 	Reasons why 100% could not be achieved:
 		1. Because of JaCoCo limitations. When unit testing switch(String) construct, JaCoCo internally counts a couple of branches extra which doesn't make sence in reality. https://github.com/jacoco/jacoco/wiki/FilteringOptions and https://github.com/jacoco/jacoco/issues/116.
 		2. There are couple of cases where I am doing switch(enum). In case of enums, "default" branch of switch block cannot be unit tested. But its necessary to have that branch throw an exception, so that it serves as red flag to developers to handle it in future in case they extend the enum.
-	Exceptions,Constants and NoOPLock class are excluded from code coverage calculation as it doesnt make sence to unit test them.
+	Exceptions and NoOPLock class are excluded from code coverage calculation as it doesnt make sence to unit test them.
 
 The assumptions I made:
 	I assumed that while language features may be used, no external libraries/frameworks may be used for source code(Since log4j also doesnt use except the dispatcher framework in modern implementations). I have however used unit testing frameworks such as Mockito, jUnit, EqualsVerifier for testing.

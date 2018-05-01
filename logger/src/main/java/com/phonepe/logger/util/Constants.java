@@ -1,12 +1,13 @@
 package com.phonepe.logger.util;
 
 /**
- * Framework level constants class to store various constants required by
- * different classes
+ * Framework level constants repository to store various constants required by
+ * different classes. This is interface because we do not want anyone to
+ * instantiate this.
  *
  * @author Kaustubh Khasnis
  */
-public class Constants {
+public interface Constants {
     public static final String CONFIG_FILE_LOCATION_KEY        = "sinks.config";
     public static final String TS_FORMAT_KEY                   = "ts_format";
     public static final String LOG_LEVEL_KEY                   = "log_level";
