@@ -73,7 +73,7 @@ Testability:
 		2. There are couple of cases where I am doing switch(enum). In case of enums, "default" branch of switch block cannot be unit tested. But its necessary to have that branch throw an exception, so that it serves as red flag to developers to handle it in future in case they extend the enum.
 	Exceptions,Constants and NoOPLock class are excluded from code coverage calculation as it doesnt make sence to unit test them.
 
-The assumpions I took:
+The assumptions I made:
 	I assumed that while language features may be used, no external libraries/frameworks may be used for source code(Since log4j also doesnt use except the dispatcher framework in modern implementations). I have however used unit testing frameworks such as Mockito, jUnit, EqualsVerifier for testing.
 	With the lack of usage of proper Dependency Injection framework, I was forced to retort to factory classes everywhere. Same thing also forced me to have a top level singleton for Logger even if I don't like it.
 
