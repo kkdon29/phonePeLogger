@@ -108,7 +108,9 @@
                 <configuration>
                     <excludes>
                         <exclude>**/*Exception.*</exclude>
-                        <exclude>**/NoOPLock.*</exclude>
+                        <exclude>**/*Constants.java</exclude>
+                        <exclude>/NoOPLock.java</exclude>
+
                     </excludes>
                     <systemPropertyVariables>
                         <jacoco-agent.destfile>target/jacoco.exec</jacoco-agent.destfile>

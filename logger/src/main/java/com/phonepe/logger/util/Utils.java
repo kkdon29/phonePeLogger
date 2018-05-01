@@ -4,12 +4,11 @@ import com.phonepe.logger.LogMessage;
 import com.phonepe.logger.LogType;
 
 /**
- * Class containing utility functions to be used by framework. This is interface
- * because we do not want anyone to instantiate this.
+ * Class containing utility functions to be used by framework
  *
  * @author Kaustubh Khasnis
  */
-public interface Utils {
+public class Utils {
     /**
      * Checks if given {@link String} is null or empty
      *
