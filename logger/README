@@ -60,7 +60,7 @@ Using the framework:
 	A sample usage of logger in a multithreaded environment using both synchronous and asynchronous logging with OutputStreamSink is provided in com.phonepe.logger.LoggerStressTest.
 	
 Build:
-	The framework uses maven for its build. So corresponding maven commands such as maven build, maven install will work for this.
+	The framework uses maven for its build. So corresponding maven commands such as mvn build, mvn install will work for this.
 
 Documentation:
 	The source code contains extensive javadoc documentation. Its not provided for test cases as it doesn't make much sence(javadocs are for public usage and understanding, while test cases are not supposed to be used externally). The javadocs can be generated using "mvn site" command.
